@@ -7,8 +7,8 @@ Package.describe({
 Package.on_use(function (api, where) {
 
   api.use([
-    "templating",
-    "gwendall:body-events"
+    "templating@1.0.11",
+    "gwendall:body-events@0.1.4"
   ], "client");
 
   api.use([
