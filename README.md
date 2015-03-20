@@ -10,12 +10,19 @@ Installation
 meteor add gwendall:impersonate
 ```
 
-How to
+Methods
 -------
 
+**Impersonate**
 Set a [data-impersonate] attribute with the id of the user to impersonate on a DOM element.
 ``` html
 <button data-impersonate="{{someUser._id}}">Click to impersonate</button>
+```
+
+**Un-impersonate**
+Set a [data-unimpersonate] attribute to a DOM element.
+``` html
+<button data-unimpersonate>Click to unimpersonate</button>
 ```
 
 Notes
