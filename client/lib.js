@@ -6,7 +6,7 @@ Impersonate.do = function(userId) {
 }
 
 Impersonate.undo = function() {
-  Meteor.connection.setUserId(Impersonate._user);
+  if (Impersonate._user) Meteor.connection.setUserId(Impersonate._user);
 }
 
 Template.body.events({
