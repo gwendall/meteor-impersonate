@@ -45,17 +45,17 @@ Should you need to use callbacks, use the JS methods directly.
 **Impersonate.do(userId, callback)**  
 ``` javascript
 var userId = "[...]";
-Impersonate.do(userId, function(err, user) {
+Impersonate.do(userId, function(err, userId) {
   if (err) return;
-  console.log("You are now impersonating " + user.profile.name);
+  console.log("You are now impersonating user #" + userId);
 });
 ```
 
 **Impersonate.undo(callback)**  
 ``` javascript
-Impersonate.undo(function(err, user) {
+Impersonate.undo(function(err, userId) {
   if (err) return;
-  console.log("Impersonating no more, welcome back " + user.profile.name);
+  console.log("Impersonating no more, welcome back #" + userId);
 })
 ```
 
