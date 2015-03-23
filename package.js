@@ -1,12 +1,13 @@
 Package.describe({
   name: "gwendall:impersonate",
   summary: "Impersonate users in Meteor",
-  version: "0.1.5"
+  version: "0.1.6"
 });
 
 Package.on_use(function (api, where) {
 
   api.use([
+    "reactive-var@1.0.5",
     "templating@1.0.11",
     "gwendall:body-events@0.1.4"
   ], "client");
