@@ -10,7 +10,10 @@ Impersonate.do = function(userId, cb) {
 }
 
 Impersonate.undo = function(cb) {
-  Impersonate.do(Impersonate._user, cb);
+  Impersonate.do(Impersonate._user, function(err, userId) {
+    if (!err) Impersonate._user = null;
+    if (!!(cb && cb.constructor && cb.apply)) cb.apply(this, [err, userId]);
+  });
 }
 
 Template.body.events({
@@ -19,9 +22,7 @@ Template.body.events({
     Impersonate.do(userId);
   },
   "click [data-unimpersonate]": function(e, data) {
-    Impersonate.undo(function(err, userId) {
-      if (!err) Impersonate._user = null;
-    });
+    Impersonate.undo();
   }
 });
 
