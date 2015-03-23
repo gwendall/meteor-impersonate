@@ -19,7 +19,9 @@ Template.body.events({
     Impersonate.do(userId);
   },
   "click [data-unimpersonate]": function(e, data) {
-    Impersonate.undo();
+    Impersonate.undo(function(err, userId) {
+      if (!err) Impersonate._user = null;
+    });
   }
 });
 
