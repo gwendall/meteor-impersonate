@@ -2,10 +2,11 @@ Impersonate = { _user: new ReactiveVar(null) };
 
 Impersonate.do = function(userId, cb) {
   Meteor.call("impersonate", userId, function(err, _userId) {
+    if (!err) {
+      if (!Impersonate._user.get()) Impersonate._user.set(Meteor.userId()); // First impersonation
+      Meteor.connection.setUserId(_userId);
+    }
     if (!!(cb && cb.constructor && cb.apply)) cb.apply(this, [err, _userId]);
-    if (err) return;
-    if (!Impersonate._user.get()) Impersonate._user.set(Meteor.userId()); // First impersonation
-    Meteor.connection.setUserId(_userId);
   });
 }
 
