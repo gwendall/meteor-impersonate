@@ -10,7 +10,7 @@ Impersonate.do = function(userId, cb) {
 }
 
 Impersonate.undo = function(cb) {
-  Impersonate.do(Impersonate._user, function(err, _userId) {
+  Impersonate.do(Impersonate._user.get(), function(err, _userId) {
     if (!err) Impersonate._user.set(null);
     if (!!(cb && cb.constructor && cb.apply)) cb.apply(this, [err, _userId]);
   });
@@ -26,6 +26,6 @@ Template.body.events({
   }
 });
 
-UI.registerHelper("isImpersonating", function () {
+Template.registerHelper("isImpersonating", function () {
   return !!Impersonate._user.get();
 });
