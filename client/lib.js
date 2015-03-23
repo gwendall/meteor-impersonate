@@ -26,6 +26,6 @@ Template.body.events({
   }
 });
 
-UI.registerHelper("isImpersonating", function () {
+Template.registerHelper("isImpersonating", function () {
   return !!Impersonate._user.get();
 });
