@@ -12,6 +12,7 @@ Meteor.methods({
     }
 
     this.setUserId(userId);
+    return userId;
 
   }
 });
