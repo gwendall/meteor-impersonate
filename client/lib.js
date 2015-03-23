@@ -1,17 +1,17 @@
-Impersonate = { _user: null };
+Impersonate = { _user: new ReactiveVar(null) };
 
 Impersonate.do = function(userId, cb) {
   Meteor.call("impersonate", userId, function(err, res) {
     if (!!(cb && cb.constructor && cb.apply)) cb.apply(this, [err, res]);
     if (err) return;
-    if (!Impersonate._user) Impersonate._user = Meteor.userId(); // First impersonation
+    if (!Impersonate._user.get()) Impersonate._user.set(Meteor.userId()); // First impersonation
     Meteor.connection.setUserId(userId);
   });
 }
 
 Impersonate.undo = function(cb) {
   Impersonate.do(Impersonate._user, function(err, userId) {
-    if (!err) Impersonate._user = null;
+    if (!err) Impersonate._user.set(null);
     if (!!(cb && cb.constructor && cb.apply)) cb.apply(this, [err, userId]);
   });
 }
@@ -27,5 +27,5 @@ Template.body.events({
 });
 
 UI.registerHelper("isImpersonating", function () {
-  return !!Impersonate._user;
+  return !!Impersonate._user.get();
 });
