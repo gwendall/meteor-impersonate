@@ -62,7 +62,7 @@ Impersonate.undo(function(err, userId) {
 Server Methods
 -------
 
-By default, the package will look for users in the "admins" group to decide whether they can impersonate or not.  
+By default, the package will grant users in the "admins" group (through alanning:roles) the possibility to impersonate other users. Use the following to set your own groups:  
 ``` javascript
 Impersonate.admins = ["masters", "bosses"];
 ```
