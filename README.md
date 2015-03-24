@@ -71,4 +71,5 @@ Notes
 -----
 
 - Uses alanning:roles. If the user trying to impersonate is not an admin, a server error will be returned.
+- The package creates a "_impersonateToken" property on the impersonating admins' documents. Make sure not to send this property to other users than the admin themselves, as it would offer the possibility to those other users to impersonate too.  
 - Built upon [David Weldon](https://dweldon.silvrback.com/impersonating-a-user)'s post
