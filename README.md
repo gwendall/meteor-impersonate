@@ -37,7 +37,7 @@ UI helpers
 {{/if}}
 ```
 
-Methods
+Client Methods
 -------
 
 Should you need to use callbacks, use the JS methods directly.  
@@ -57,6 +57,14 @@ Impersonate.undo(function(err, userId) {
   if (err) return;
   console.log("Impersonating no more, welcome back #" + userId);
 })
+```
+
+Server Methods
+-------
+
+By default, the package will look for users in the "admins" group to decide whether they can impersonate or not.  
+``` javascript
+Impersonate.admins = ["masters", "bosses"];
 ```
 
 Notes
