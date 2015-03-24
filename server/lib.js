@@ -1,18 +1,51 @@
+Impersonate = { admins: ["admin"] };
+
+// Reset all tokens
+Meteor.startup(function() {
+  var selector = { _impersonateToken: { $exists: true }};
+  var modifier = { $unset: { _impersonateToken: "" }};
+  var options = { multi: true };
+  Meteor.users.update(selector, modifier, options);
+});
+
 Meteor.methods({
-  "impersonate": function(userId) {
+  impersonate: function(params) {
 
-    check(userId, String);
+    var currentUser = this.userId;
+    check(currentUser, String);
+    check(params, Object);
+    check(params.toUser, String);
 
-    if (!Meteor.users.findOne({ _id: userId })) {
+    if (params.fromUser || params.token) {
+      check(params.fromUser, String);
+      check(params.token, String);
+    }
+
+    if (!Meteor.users.findOne({ _id: params.toUser })) {
       throw new Meteor.Error(404, "User not found. Can't impersonate it.");
     }
 
-    if (!Roles.userIsInRole(this.userId, ["admin"])) {
+    if (!params.token && !Roles.userIsInRole(currentUser, Impersonate.admins)) {
       throw new Meteor.Error(403, "Permission denied. You need to be an admin to impersonate users.");
     }
 
-    this.setUserId(userId);
-    return userId;
+    if (params.token) {
+      // Impersonating with a token
+      var selector = { _id: params.fromUser, _impersonateToken: params.token };
+      var isValid = !!Meteor.users.findOne(selector);
+      if (!isValid) {
+        throw new Meteor.Error(403, "Permission denied. Can't impersonate with this token.");
+      }
+    } else {
+      // Impersonating with no token
+      params.token = Random.id();
+      var selector = { _id: currentUser };
+      var modifier = { $set: { _impersonateToken: params.token }};
+      Meteor.users.update(selector, modifier);
+    }
+
+    this.setUserId(params.toUser);
+    return { fromUser: currentUser, toUser: params.toUser, token: params.token };
 
   }
 });
