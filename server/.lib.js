@@ -1,7 +1,4 @@
-Impersonate = {
-  admins: ["admin"],
-  adminGroups:[], // { role: "admin", group: "organization" }
-};
+Impersonate = { admins: ["admin"] };
 
 // Reset all tokens
 Meteor.startup(function() {
@@ -28,23 +25,7 @@ Meteor.methods({
       throw new Meteor.Error(404, "User not found. Can't impersonate it.");
     }
 
-    var roleAllow = false;
-    // if there is any role, use that
-    if (Impersonate.admins && Impersonate.admins.length) {
-      roleAllow = Roles.userIsInRole(currentUser, Impersonate.admins);
-    } else {
-      // else, single roles have been removed, check roles-groups have been added
-      if (Impersonate.adminGroups)
-        // check for permissions using roles and groups
-        for (var i = 0; i< Impersonate.adminGroups.length; i++ ) {
-          var roleGroup = Impersonate.adminGroups[i];
-          roleAllow = Roles.userIsInRole(currentUser, roleGroup.role, roleGroup.group);
-          if (roleAllow) break; // found an allowable role, no need to check further, proceed
-        }
-      }
-    }
-
-    if (!params.token && !roleAllow) {
+    if (!params.token && !Roles.userIsInRole(currentUser, Impersonate.admins)) {
       throw new Meteor.Error(403, "Permission denied. You need to be an admin to impersonate users.");
     }
 

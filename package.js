@@ -1,7 +1,7 @@
 Package.describe({
   name: "gwendall:impersonate",
   summary: "Impersonate users in Meteor",
-  version: "0.2.0",
+  version: "0.2.1",
   git: "https://github.com/gwendall/meteor-impersonate.git",
 });
 
