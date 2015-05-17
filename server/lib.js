@@ -31,17 +31,23 @@ Meteor.methods({
 
     if (params.token) {
       // Impersonating with a token
-      var selector = { _id: params.fromUser, _impersonateToken: params.token };
+      var selector = {
+        "_id": params.fromUser,
+        "services.impersonate.token": params.token
+      };
       var isValid = !!Meteor.users.findOne(selector);
       if (!isValid) {
         throw new Meteor.Error(403, "Permission denied. Can't impersonate with this token.");
       }
     } else {
       // Impersonating with no token
-      params.token = Random.id();
+      var user = Meteor.users.findOne({ _id: currentUser }) || {};
+      params.token = Meteor._get(user, "services", "resume", "loginTokens", 0, "hashedToken");
+      /*
       var selector = { _id: currentUser };
       var modifier = { $set: { _impersonateToken: params.token }};
       Meteor.users.update(selector, modifier);
+      */
     }
 
     this.setUserId(params.toUser);

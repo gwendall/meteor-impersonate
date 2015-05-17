@@ -1,10 +1,11 @@
 Package.describe({
   name: "gwendall:impersonate",
   summary: "Impersonate users in Meteor",
-  version: "0.2.0"
+  version: "0.2.0",
+  git: "https://github.com/gwendall/meteor-impersonate.git",
 });
 
-Package.on_use(function (api, where) {
+Package.onUse(function (api, where) {
 
   api.use([
     "accounts-base@1.2.0",
@@ -18,11 +19,11 @@ Package.on_use(function (api, where) {
     "alanning:roles@1.2.12",
   ]);
 
-  api.add_files([
+  api.addFiles([
     "server/lib.js"
   ], "server");
 
-  api.add_files([
+  api.addFiles([
     "client/lib.js"
   ], "client");
 
