@@ -34,7 +34,7 @@ Meteor.methods({
       roleAllow = Roles.userIsInRole(currentUser, Impersonate.admins);
     } else {
       // else, single roles have been removed, check roles-groups have been added
-      if (Impersonate.adminGroups)
+      if (Impersonate.adminGroups) {
         // check for permissions using roles and groups
         for (var i = 0; i< Impersonate.adminGroups.length; i++ ) {
           var roleGroup = Impersonate.adminGroups[i];
