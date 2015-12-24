@@ -32,15 +32,14 @@ Meteor.methods({
     // if there is any role, use that
     if (Impersonate.admins && Impersonate.admins.length) {
       roleAllow = Roles.userIsInRole(currentUser, Impersonate.admins);
-    } else {
-      // else, single roles have been removed, check roles-groups have been added
-      if (Impersonate.adminGroups) {
-        // check for permissions using roles and groups
-        for (var i = 0; i< Impersonate.adminGroups.length; i++ ) {
-          var roleGroup = Impersonate.adminGroups[i];
-          roleAllow = Roles.userIsInRole(currentUser, roleGroup.role, roleGroup.group);
-          if (roleAllow) break; // found an allowable role, no need to check further, proceed
-        }
+    }
+
+    if (Impersonate.adminGroups && !roleAllow) {
+      // check for permissions using roles and groups
+      for (var i = 0; i< Impersonate.adminGroups.length; i++ ) {
+        var roleGroup = Impersonate.adminGroups[i];
+        roleAllow = Roles.userIsInRole(currentUser, roleGroup.role, roleGroup.group);
+        if (roleAllow) break; // found an allowable role, no need to check further, proceed
       }
     }
 
