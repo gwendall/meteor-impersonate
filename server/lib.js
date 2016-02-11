@@ -3,14 +3,6 @@ Impersonate = {
   adminGroups:[], // { role: "admin", group: "organization" }
 };
 
-// Reset all tokens
-Meteor.startup(function() {
-  var selector = { _impersonateToken: { $exists: true }};
-  var modifier = { $unset: { _impersonateToken: "" }};
-  var options = { multi: true };
-  Meteor.users.update(selector, modifier, options);
-});
-
 Meteor.methods({
   impersonate: function(params) {
 
