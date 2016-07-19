@@ -5,7 +5,7 @@ Impersonate = {
 
 Impersonate.onImpersonate = function onImpersonate(func) {
 	if (this._onImpersonateHook) {
-		throw new Error("Can only call onCreateUser once");
+		throw new Meteor.Error("Can only call onCreateUser once");
 	}
 	this._onImpersonateHook = func;
 };
