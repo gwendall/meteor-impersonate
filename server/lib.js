@@ -3,6 +3,13 @@ Impersonate = {
   adminGroups:[], // { role: "admin", group: "organization" }
 };
 
+Impersonate.onImpersonate = function onImpersonate(func) {
+	if (this._onImpersonateHook) {
+		throw new Error("Can only call onCreateUser once");
+	}
+	this._onImpersonateHook = func;
+};
+
 Meteor.methods({
   impersonate: function(params) {
 
@@ -52,6 +59,9 @@ Meteor.methods({
     }
 
     this.setUserId(params.toUser);
+    if (Impersonate._onImpersonateHook) {
+	    Impersonate._onImpersonateHook(params.toUser)
+    }
     return { fromUser: currentUser, toUser: params.toUser, token: params.token };
 
   }
