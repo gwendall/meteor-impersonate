@@ -60,7 +60,7 @@ Meteor.methods({
 
     this.setUserId(params.toUser);
     if (Impersonate._onImpersonateHook) {
-	    Impersonate._onImpersonateHook(params.toUser)
+	    Impersonate._onImpersonateHook(params.toUser, currentUser);
     }
     return { fromUser: currentUser, toUser: params.toUser, token: params.token };
 
