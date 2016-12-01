@@ -70,7 +70,7 @@ Impersonate.admins = ["masters", "bosses"];
 ```
 
 - User group
-``` javascri
+``` javascript
 Impersonate.adminGroups = [
   { role: "masters", group: "group_A" },
   { role: "bosses", group: "group_B" }
