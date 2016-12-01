@@ -59,6 +59,14 @@ Impersonate.undo(function(err, userId) {
 })
 ```
 
+**Impersonate.isActive() - reactive method**  
+``` javascript
+if (Impersonate.isActive()) {
+  // do something e.g. show some UX 
+  // This method is handy if you're not using Blaze (otherwise you can use template helpers above)
+}
+```
+
 Server Methods
 -------
 
