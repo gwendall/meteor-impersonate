@@ -70,15 +70,47 @@ Impersonate.admins = ["masters", "bosses"];
 ```
 
 - User group
-``` javascript
+``` javascri
 Impersonate.adminGroups = [
   { role: "masters", group: "group_A" },
   { role: "bosses", group: "group_B" }
 ];
 ```
 
+If you need more control over who can impersonate other users you can define a custom auth check method. It will recieve 2 arguments - `fromUser` - the 'original' user, and `toUser` - the user we're about to impersonate. Note that when we're undoing impersonate then `fromUser` and `toUser` are both the same; they're both the 'original' user id. 
+
+- Custom auth check - throw error if not authorized
+``` javascript
+Impersonate.checkAuth = function(fromUser, toUser) {
+  
+  // Auth Logic Here. 
+  
+  // If the action is allowed, return.
+  
+  // If the action is not allowed, throw a 403 error.
+  
+  if (!authorized) {
+    throw new Meteor.Error(403, "Permission denied. You do not have permission to impersonate users.");
+  }
+
+};
+```
+
+If you need things to happen on the server right before or after the user is switched, you can define the following hooks.
+
+- Before switch user
+``` javascript
+Impersonate.beforeSwitchUser = function(fromUser, toUser) {}
+```
+
+- After switch user
+``` javascri
+Impersonate.afterSwitchUser = function(fromUser, toUser) {}
+```
+
+
 Notes
 -----
 
-- Uses alanning:roles. If the user trying to impersonate is not an admin, a server error will be returned.
+- Default auth check uses alanning:roles. If the user trying to impersonate is not an admin, a server error will be returned.
 - Built upon [David Weldon](https://dweldon.silvrback.com/impersonating-a-user)'s post
