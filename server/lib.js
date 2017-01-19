@@ -84,16 +84,16 @@ Meteor.methods({
     // With the default auth method it's technically only necessary
     // to run this check on the first call but with other auth methods
     // that check the toUser as well you'll need to check every time.
-    Impersonate.checkAuth(fromUser, params.toUser);
+    Impersonate.checkAuth.call(this, fromUser, params.toUser);
 
     // Pre action hook
-    Impersonate.beforeSwitchUser(fromUser, params.toUser);
+    Impersonate.beforeSwitchUser.call(this, fromUser, params.toUser);
 
     // Switch user
     this.setUserId(params.toUser);
 
     // Post action hook
-    Impersonate.afterSwitchUser(fromUser, params.toUser);
+    Impersonate.afterSwitchUser.call(this, fromUser, params.toUser);
 
     return { fromUser: currentUser, toUser: params.toUser, token: params.token };
 
