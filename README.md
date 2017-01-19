@@ -116,6 +116,7 @@ Impersonate.beforeSwitchUser = function(fromUser, toUser) {}
 Impersonate.afterSwitchUser = function(fromUser, toUser) {}
 ```
 
+Note that `Impersonate.checkAuth`, `Impersonate.beforeSwitchUser`, and `Impersonate.afterSwitchUser` are called with `this` are bound to the Impersonate Meteor Method. Thus you can - for example - access `this.connection` within these methods. Also if you are undoing impersonate and want to know the the userId you just impersonated you can use `this.userId` in `Impersonate.beforeSwitchUser` (fromUser is always the "original" user - see above). 
 
 Notes
 -----
