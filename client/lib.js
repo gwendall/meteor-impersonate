@@ -28,7 +28,7 @@ Impersonate.undo = function(cb) {
 }
 
 // Reset data on logout
-Meteor.autorun(function() {
+Tracker.autorun(function() {
   if (Meteor.userId()) return;
   Impersonate._active.set(false);
   Impersonate._user = null;
