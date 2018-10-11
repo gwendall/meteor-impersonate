@@ -11,7 +11,8 @@ Package.onUse(function (api, where) {
     "accounts-base@1.2.2",
     "reactive-var@1.0.6",
     "templating@1.1.5",
-    "gwendall:body-events@0.1.6"
+    "gwendall:body-events@0.1.6",
+    "tracker@1.2.0"
   ], "client");
 
   api.use([
