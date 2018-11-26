@@ -1,8 +1,8 @@
 Package.describe({
-  name: "gwendall:impersonate",
+  name: "nidem-impersonate",
   summary: "Impersonate users in Meteor",
   version: "0.2.2",
-  git: "https://github.com/gwendall/meteor-impersonate.git",
+  git: "https://github.com/nidem/meteor-impersonate.git",
 });
 
 Package.onUse(function (api, where) {
