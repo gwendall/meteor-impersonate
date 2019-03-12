@@ -18,6 +18,7 @@ Package.onUse(function (api, where) {
   api.use([
     "random@1.0.5",
     "alanning:roles@1.2.14",
+    "check@1.2.4"
   ]);
 
   api.addFiles([
