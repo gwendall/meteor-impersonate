@@ -64,6 +64,14 @@ Impersonate.undo(function(err, userId) {
 })
 ```
 
+**Impersonate.isActive() - reactive method**  
+``` javascript
+if (Impersonate.isActive()) {
+  // do something e.g. show some UX 
+  // This method is handy if you're not using Blaze (otherwise you can use template helpers above)
+}
+```
+
 Server Methods
 -------
 
@@ -82,8 +90,41 @@ Impersonate.adminGroups = [
 ];
 ```
 
+If you need more control over who can impersonate other users you can define a custom auth check method. It will recieve 2 arguments - `fromUser` - the 'original' user, and `toUser` - the user we're about to impersonate. Note that when we're undoing impersonate then `fromUser` and `toUser` are both the same; they're both the 'original' user id. 
+
+- Custom auth check - throw error if not authorized
+``` javascript
+Impersonate.checkAuth = function(fromUser, toUser) {
+  
+  // Auth Logic Here. 
+  
+  // If the action is allowed, return.
+  
+  // If the action is not allowed, throw a 403 error.
+  
+  if (!authorized) {
+    throw new Meteor.Error(403, "Permission denied. You do not have permission to impersonate users.");
+  }
+
+};
+```
+
+If you need things to happen on the server right before or after the user is switched, you can define the following hooks.
+
+- Before switch user
+``` javascript
+Impersonate.beforeSwitchUser = function(fromUser, toUser) {}
+```
+
+- After switch user
+``` javascri
+Impersonate.afterSwitchUser = function(fromUser, toUser) {}
+```
+
+Note that `Impersonate.checkAuth`, `Impersonate.beforeSwitchUser`, and `Impersonate.afterSwitchUser` are called with `this` are bound to the Impersonate Meteor Method. Thus you can - for example - access `this.connection` within these methods. Also if you are undoing impersonate and want to know the the userId you just impersonated you can use `this.userId` in `Impersonate.beforeSwitchUser` (fromUser is always the "original" user - see above). 
+
 Notes
 -----
 
-- Uses alanning:roles. If the user trying to impersonate is not an admin, a server error will be returned.
+- Default auth check uses alanning:roles. If the user trying to impersonate is not an admin, a server error will be returned.
 - Built upon [David Weldon](https://dweldon.silvrback.com/impersonating-a-user)'s post

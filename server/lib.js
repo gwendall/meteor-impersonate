@@ -1,15 +1,49 @@
+
+var defaultAuthCheck = function(fromUser, toUser) {
+
+  var roleAllow = false;
+  // if there is any role, use that
+  if (Impersonate.admins && Impersonate.admins.length) {
+    roleAllow = Roles.userIsInRole(fromUser, Impersonate.admins);
+  }
+
+  if (Impersonate.adminGroups && !roleAllow) {
+    // check for permissions using roles and groups
+    for (var i = 0; i< Impersonate.adminGroups.length; i++ ) {
+      var roleGroup = Impersonate.adminGroups[i];
+      roleAllow = Roles.userIsInRole(fromUser, roleGroup.role, roleGroup.group);
+      if (roleAllow) break; // found an allowable role, no need to check further, proceed
+    }
+  }
+
+  if (!roleAllow) {
+    throw new Meteor.Error(403, "Permission denied. You need to be an admin to impersonate users.");
+  }
+
+};
+
+
 Impersonate = {
   admins: ["admin"],
   adminGroups:[], // { role: "admin", group: "organization" }
+  checkAuth: defaultAuthCheck,
+  beforeSwitchUser: function() {},
+  afterSwitchUser: function() {},
 };
+
+//defaultAuthCheck
 
 Meteor.methods({
   impersonate: function(params) {
 
     var currentUser = this.userId;
+
     check(currentUser, String);
     check(params, Object);
     check(params.toUser, String);
+
+
+    // These props are set on every call except the first call.
 
     if (params.fromUser || params.token) {
       check(params.fromUser, String);
@@ -20,38 +54,47 @@ Meteor.methods({
       throw new Meteor.Error(404, "User not found. Can't impersonate it.");
     }
 
-    var roleAllow = false;
-    // if there is any role, use that
-    if (Impersonate.admins && Impersonate.admins.length) {
-      roleAllow = Roles.userIsInRole(currentUser, Impersonate.admins);
-    }
-
-    if (Impersonate.adminGroups && !roleAllow) {
-      // check for permissions using roles and groups
-      for (var i = 0; i< Impersonate.adminGroups.length; i++ ) {
-        var roleGroup = Impersonate.adminGroups[i];
-        roleAllow = Roles.userIsInRole(currentUser, roleGroup.role, roleGroup.group);
-        if (roleAllow) break; // found an allowable role, no need to check further, proceed
-      }
-    }
-
-    if (!params.token && !roleAllow) {
-      throw new Meteor.Error(403, "Permission denied. You need to be an admin to impersonate users.");
-    }
 
     if (params.token) {
+
       // Impersonating with a token
-      var user = Meteor.users.findOne({ _id: params.fromUser }) || {};
+      // params.fromUser is always the "original" user.
+      // When we call Impersonate.undo then toUser is the original user too.
+      var fromUser = params.fromUser;
+
+      // check the token is valid.
+      var user = Meteor.users.findOne({ _id: fromUser }) || {};
       if (params.token != Meteor._get(user, "services", "resume", "loginTokens", 0, "hashedToken")) {
         throw new Meteor.Error(403, "Permission denied. Can't impersonate with this token.");
       }
+
     } else {
+
       // Impersonating with no token
-      var user = Meteor.users.findOne({ _id: currentUser }) || {};
+      // This is the first call to Impersonate in this user's browser session
+      // This user will be the "fromUser" from now on.
+      var fromUser = currentUser;
+
+      var user = Meteor.users.findOne({ _id: fromUser }) || {};
       params.token = Meteor._get(user, "services", "resume", "loginTokens", 0, "hashedToken");
     }
 
+
+    // Check the fromUser is allowed to impersonate the toUser.
+    // With the default auth method it's technically only necessary
+    // to run this check on the first call but with other auth methods
+    // that check the toUser as well you'll need to check every time.
+    Impersonate.checkAuth.call(this, fromUser, params.toUser);
+
+    // Pre action hook
+    Impersonate.beforeSwitchUser.call(this, fromUser, params.toUser);
+
+    // Switch user
     this.setUserId(params.toUser);
+
+    // Post action hook
+    Impersonate.afterSwitchUser.call(this, fromUser, params.toUser);
+
     return { fromUser: currentUser, toUser: params.toUser, token: params.token };
 
   }
